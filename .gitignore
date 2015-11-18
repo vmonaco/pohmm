@@ -50,3 +50,5 @@ nosetests.xml
 
 # pycharm
 .idea/
+
+.cache/
