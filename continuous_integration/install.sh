@@ -33,5 +33,4 @@ source activate testenv
 # Build pohmm in the install.sh script to collapse the verbose
 # build output in the travis output when it succeeds.
 python --version
-python -c "import sklearn; print('sklearn %s' % sklearn.__version__)"
 python setup.py build_ext --inplace

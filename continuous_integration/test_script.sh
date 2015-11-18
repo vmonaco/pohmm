@@ -9,6 +9,5 @@
 set -e
 
 python --version
-python -c "import sklearn; print('sklearn %s' % sklearn.__version__)"
 
 make test
