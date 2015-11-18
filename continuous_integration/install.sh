@@ -27,7 +27,7 @@ conda update --yes conda
 
 # Configure the conda environment and put it in the path using the
 # provided versions
-conda create -n testenv --yes python=$PYTHON_VERSION pip pytest cython
+conda create -n testenv --yes python=$PYTHON_VERSION pip pytest numpy scipy cython
 source activate testenv
 
 # Build pohmm in the install.sh script to collapse the verbose
