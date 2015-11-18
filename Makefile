@@ -23,7 +23,7 @@ inplace:
 test-code: in
 	$(PYTEST)
 
-test: test-code test-doc
+test: test-code
 
 trailing-spaces:
 	find pohmm -name "*.py" | xargs perl -pi -e 's/[ \t]*$$//'

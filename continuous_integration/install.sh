@@ -1,7 +1,7 @@
 #!/bin/bash
 # This script is meant to be called by the "install" step defined in
 # .travis.yml. See http://docs.travis-ci.com/ for more details.
-# The behavior of the script is controlled by environment variabled defined
+# The behavior of the script is controlled by environment variable defined
 # in the .travis.yml in the top level folder of the project.
 
 # License: 3-clause BSD
@@ -27,10 +27,11 @@ conda update --yes conda
 
 # Configure the conda environment and put it in the path using the
 # provided versions
-conda create -n testenv --yes python=$PYTHON_VERSION pip pytest numpy scipy cython
+conda create -n testenv --yes python=$PYTHON_VERSION pip
 source activate testenv
 
 # Build pohmm in the install.sh script to collapse the verbose
 # build output in the travis output when it succeeds.
 python --version
+python setup.py install
 python setup.py build_ext --inplace
