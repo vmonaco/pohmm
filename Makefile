@@ -4,7 +4,7 @@
 
 PYTHON ?= python
 CYTHON ?= cython
-NOSETESTS ?= nosetests
+PYTEST ?= py.test
 CTAGS ?= ctags
 
 all: clean inplace test
@@ -21,12 +21,7 @@ inplace:
 	$(PYTHON) setup.py build_ext -i
 
 test-code: in
-	$(NOSETESTS) -s -v pohmm
-test-doc:
-	$(NOSETESTS) -s -v doc/
-test-coverage:
-	rm -rf coverage .coverage
-	$(NOSETESTS) -s -v --with-coverage pohmm
+	$(PYTEST)
 
 test: test-code test-doc
 
