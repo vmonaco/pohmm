@@ -28,7 +28,7 @@ Bleeding edge version:
 
 
 *pohmm* Documentation
--------------
+---------------------
 
 [Documentation and Tutorials](http://pohmm.readthedocs.org/en/latest/index.html)
 
