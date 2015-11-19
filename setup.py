@@ -78,7 +78,7 @@ setup_options = dict(
         'Programming Language :: Python :: 3.5',
     ],
     ext_modules=[
-        Extension('pohmm._hmmc', ['pohmm/_hmmc.c'],
+        Extension('pohmm._hmmc', ['pohmm/_hmmc.pyx'],
                   extra_compile_args=['-O3'],
                   include_dirs=[np.get_include()])
     ],
