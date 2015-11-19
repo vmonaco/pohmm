@@ -3,6 +3,13 @@
 # Copyright (C) 2015 Vinnie Monaco <contact@vmonaco.com>
 
 import os, sys
+from setuptools import setup, Extension
+
+def read(fname):
+    return open(os.path.join(os.path.dirname(__file__), fname)).read()
+
+exec(compile(open('pohmm/version.py').read(),
+                  'pohmm/version.py', 'exec'))
 
 try:
     import numpy as np
@@ -15,23 +22,6 @@ except ImportError:
         @staticmethod
         def get_include():
             return os.path.join(sys.prefix, 'include')
-
-from setuptools import setup, Extension
-
-# Extract the version, README, and CHANGES
-here = os.path.abspath(os.path.dirname(__file__))
-
-try:
-    import pohmm
-    version = pohmm.__version__
-except Exception:
-    version = ''
-
-try:
-    README = open(os.path.join(here, 'README.rst')).read()
-    CHANGES = open(os.path.join(here, 'CHANGES.rst')).read()
-except IOError:
-    README = CHANGES = ''
 
 
 install_requires = [
@@ -55,14 +45,15 @@ docs_require = [
 
 setup_options = dict(
     name='pohmm',
-    version=version,
+    version=__version__,
+    author='Vinnie Monaco',
+    author_email='contact@vmonaco.com',
     description='Partially observable hidden Markov model',
-    long_description='\n\n'.join([README, CHANGES]),
-    maintainer='Vinnie Monaco',
-    maintainer_email='contact@vmonaco.com',
     license='new BSD',
+    keywords='hidden Markov model data analysis',
     url='https://github.com/vmonaco/pohmm',
     packages=['pohmm'],
+    long_description=read('README.txt'),
     classifiers=[
         'Development Status :: 2 - Pre-Alpha',
         'License :: OSI Approved',
@@ -86,6 +77,14 @@ setup_options = dict(
     extras_require={
         'testing': tests_require,
         'docs': docs_require
+    },
+    package_data={
+        "pohmm": [
+            "../README.rst",
+            "../README.txt",
+            "../LICENSE",
+            "../MANIFEST.in",
+        ]
     },
 )
 

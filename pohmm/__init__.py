@@ -1,11 +1,6 @@
-"""
-pohmm
-========
-
-``pohmm`` is an implementation of the partially observable hidden Markov model
-
-
-"""
+# -*- coding: utf-8 -*-
 from .pohmm import POHMM
 
-__version__ = '1.0'
+from .version import __version__
+
+__all__ = ['POHMM']

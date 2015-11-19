@@ -1,8 +1,71 @@
+# This allows it to run on faster containers.
+sudo: false
+
 language: python
-install: source continuous_integration/install.sh
-script: bash continuous_integration/test_script.sh
-env:
-  matrix:
-    - PYTHON_VERSION="3.3"
-    - PYTHON_VERSION="3.4"
-    - PYTHON_VERSION="3.5"
+
+matrix:
+  include:
+    - python: 2.7
+      env: MATPLOTLIB_VERSION=1.4.3 DISPLAY=:99.0
+    - python: 3.3
+      env: MATPLOTLIB_VERSION=1.4.3 DISPLAY=:99.0
+    - python: 3.4
+      env: MATPLOTLIB_VERSION=1.4.3 DISPLAY=:99.0
+    - python: 3.5
+      env: MATPLOTLIB_VERSION=1.4.3 DISPLAY=:99.0
+    - python: 2.7
+      env: MATPLOTLIB_VERSION=1.5.0rc2 DISPLAY=:99.0
+    - python: 3.5
+      env: MATPLOTLIB_VERSION=1.5.0rc2 DISPLAY=:99.0
+#  allow_failures:
+#    - python: "nightly"
+
+addons:
+  apt:
+    packages:
+    - gcc
+    - gfortran
+
+# To be able to run plotting tests
+before_install:
+  - sh -e /etc/init.d/xvfb start
+
+# See http://conda.pydata.org/docs/travis.html
+install:
+  # You may want to periodically update this, although the conda update
+  # conda line below will keep everything up-to-date.
+  # This saves us some downloading for this version
+  - if [[ "$TRAVIS_PYTHON_VERSION" == "2.7" ]]; then
+      wget https://repo.continuum.io/miniconda/Miniconda-latest-Linux-x86_64.sh -O miniconda.sh;
+    else
+      wget https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh -O miniconda.sh;
+    fi
+  - bash miniconda.sh -b -p $HOME/miniconda
+  - export PATH="$HOME/miniconda/bin:$PATH"
+  - hash -r
+  - conda config --set always_yes yes --set changeps1 no
+  - conda update conda
+  # Useful for debugging any issues with conda
+  - conda info -a
+
+  # Should match requirements.txt
+  - conda create -n test-environment python=$TRAVIS_PYTHON_VERSION pip cython numpy scipy pandas pytest
+  - source activate test-environment
+
+  # When 1.5.0 is released, can use only conda.
+  - if [[ "$MATPLOTLIB_VERSION" == "1.4.3" ]]; then
+      conda install -n test-environment matplotlib=$MATPLOTLIB_VERSION;
+    else
+      pip install git+https://github.com/matplotlib/matplotlib.git@v$MATPLOTLIB_VERSION;
+    fi
+
+  # Build in place so we can run tests
+  - pip install coveralls pytest-cov
+  - pip install .
+# command to run tests
+script: py.test --cov=pohmm -vv --block=False
+after_success:
+  coveralls
+# Don't want notifications
+notifications:
+  email: false
