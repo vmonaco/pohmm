@@ -1,4 +1,4 @@
-pohmm |travis| |coveralls|
+pohmm |travis| |coveralls| |pypi_v| |pypi_d|
 ========
 
 .. |travis| image:: https://api.travis-ci.org/vmonaco/pohmm.png?branch=master
