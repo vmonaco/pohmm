@@ -21,7 +21,7 @@ def main():
     print('Observations:', TRAIN_OBS)
     print('p-states:', TRAIN_PSTATES)
 
-    hmm = pohmm.POHMM(n_hidden_states=2,
+    hmm = pohmm.Pohmm(n_hidden_states=2,
                       init_spread=2,
                       emissions=['lognormal'],
                       init_method='obs',

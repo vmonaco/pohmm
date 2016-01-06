@@ -57,7 +57,7 @@ _RANDINIT = {
 }
 
 
-class POHMM(object):
+class Pohmm(object):
     """
     Partially observable hidden Markov model
     """
@@ -236,13 +236,14 @@ class POHMM(object):
                 sigma = self.emission[feature_name]['sigma'][pstates_idx]
                 for j in range(self.n_hidden_states):
                     q[:, j, col] = np.log(
-                        np.maximum(MIN_PROBA, stats.norm.pdf(obs[:, col], loc=mu[:, j], scale=sigma[:, j])))
+                            np.maximum(MIN_PROBA, stats.norm.pdf(obs[:, col], loc=mu[:, j], scale=sigma[:, j])))
             if feature_distr == 'lognormal':
                 logmu = self.emission[feature_name]['logmu'][pstates_idx]
                 logsigma = self.emission[feature_name]['logsigma'][pstates_idx]
                 for j in range(self.n_hidden_states):
-                    q[:, j, col] = np.log(np.maximum(MIN_PROBA, stats.lognorm.pdf(obs[:, col], logsigma[:, j], loc=0,
-                                                                                  scale=np.exp(logmu[:, j]))))
+                    q[:, j, col] = np.log(np.maximum(MIN_PROBA,
+                                                     stats.lognorm.pdf(obs[:, col], logsigma[:, j], loc=0,
+                                                                       scale=np.exp(logmu[:, j]))))
 
         q = q.sum(axis=2)
         return q
@@ -330,7 +331,7 @@ class POHMM(object):
                         self.emission[feature_name]['sigma'][idx, :] = np.maximum(obs[idx_pstate, col].std(), MIN_PROBA)
                         self.emission[feature_name]['mu'][idx] = obs[idx_pstate, col].mean() + obs[:,
                                                                                                col].std() * np.linspace(
-                            -self.init_spread, self.init_spread, self.n_hidden_states)
+                                -self.init_spread, self.init_spread, self.n_hidden_states)
                     else:
                         self.emission[feature_name]['sigma'][idx, :] = np.maximum(obs[idx_pstate, col].std(), MIN_PROBA)
                         self.emission[feature_name]['mu'][idx, :] = obs[idx_pstate, col].mean()
@@ -349,7 +350,8 @@ class POHMM(object):
                         self.emission[feature_name]['logsigma'][idx, :] = np.maximum(np.log(obs[idx_pstate, col]).std(),
                                                                                      MIN_PROBA)
                         self.emission[feature_name]['logmu'][idx] = np.log(obs[idx_pstate, col]).mean() + np.log(
-                            obs[:, col]).std() * np.linspace(-self.init_spread, self.init_spread, self.n_hidden_states)
+                                obs[:, col]).std() * np.linspace(-self.init_spread, self.init_spread,
+                                                                 self.n_hidden_states)
                     else:
                         self.emission[feature_name]['logsigma'][idx, :] = np.maximum(np.log(obs[idx_pstate, col]).std(),
                                                                                      MIN_PROBA)
@@ -369,7 +371,7 @@ class POHMM(object):
 
         self.pstate_startprob[1:] = gen_stochastic_matrix(size=self.n_partial_states - 1, random_state=random_state)
         self.pstate_transmat[1:, 1:] = gen_stochastic_matrix(
-            size=(self.n_partial_states - 1, self.n_partial_states - 1), random_state=random_state)
+                size=(self.n_partial_states - 1, self.n_partial_states - 1), random_state=random_state)
         self.pstate_steadyprob[1:] = steadystate(self.pstate_transmat[1:, 1:])
 
         self.startprob = gen_stochastic_matrix(size=(self.n_partial_states, self.n_hidden_states),
@@ -445,7 +447,7 @@ class POHMM(object):
                 w_i0 = self.pstate_trans_freq[i, 0] * np.exp(-self.pstate_trans_freq[i, j])
                 w_0j = self.pstate_trans_freq[0, j] * np.exp(-self.pstate_trans_freq[i, j])
                 w_ = self.pstate_trans_freq[0, 0] * np.exp(
-                    -(self.pstate_trans_freq[i, 0] + self.pstate_trans_freq[0, j]))
+                        -(self.pstate_trans_freq[i, 0] + self.pstate_trans_freq[0, j]))
                 w_ij = self.pstate_trans_freq[i, j]
                 w_ij, w_i0, w_0j, w_ = normalize(np.array([w_ij, w_i0, w_0j, w_]))
             elif 'fixed' == self.smoothing['transmat']:
@@ -510,7 +512,7 @@ class POHMM(object):
             'start': np.zeros((self.n_partial_states, self.n_hidden_states)),
             'steady': np.zeros((self.n_partial_states, self.n_hidden_states)),
             'trans': np.zeros(
-                (self.n_partial_states, self.n_partial_states, self.n_hidden_states, self.n_hidden_states))
+                    (self.n_partial_states, self.n_partial_states, self.n_hidden_states, self.n_hidden_states))
         }
 
         return stats
@@ -534,7 +536,7 @@ class POHMM(object):
             for i, j in unique_rows(np.c_[pstates_idx[:-1], pstates_idx[1:]]):
                 if ((pstates_idx[:-1] == i) & (pstates_idx[1:] == j)).sum() > 0:
                     stats['trans'][i, j] += np.exp(
-                        logsumexp(lneta[(pstates_idx[:-1] == i) & (pstates_idx[1:] == j)], axis=0))
+                            logsumexp(lneta[(pstates_idx[:-1] == i) & (pstates_idx[1:] == j)], axis=0))
 
         for i in range(self.n_partial_states):
             stats['post'][i] += posteriors[pstates_idx == i].sum(axis=0)
@@ -560,7 +562,7 @@ class POHMM(object):
         steadyprob[0] = full_steadyprob.reshape(-1, self.n_hidden_states).sum(axis=0)
         for i in range(self.n_partial_states - 1):
             steadyprob[i + 1] = normalize(
-                full_steadyprob[i * self.n_hidden_states:i * self.n_hidden_states + self.n_hidden_states])
+                    full_steadyprob[i * self.n_hidden_states:i * self.n_hidden_states + self.n_hidden_states])
 
         self.steadyprob = steadyprob
 
@@ -588,7 +590,7 @@ class POHMM(object):
                 mu_0 = (pweights * mu).sum(axis=0)
                 self.emission[feature_name]['mu'][0, :] = mu_0
                 self.emission[feature_name]['sigma'][0, :] = np.sqrt(
-                    (pweights * ((mu - mu_0) ** 2 + sigma ** 2)).sum(axis=0))
+                        (pweights * ((mu - mu_0) ** 2 + sigma ** 2)).sum(axis=0))
 
             if feature_distr == 'lognormal':
                 # Marginal state is a mixture of normals
@@ -599,7 +601,7 @@ class POHMM(object):
                 mu_0 = (pweights * mu).sum(axis=0)
                 self.emission[feature_name]['logmu'][0, :] = mu_0
                 self.emission[feature_name]['logsigma'][0, :] = np.sqrt(
-                    (pweights * ((mu - mu_0) ** 2 + sigma ** 2)).sum(axis=0))
+                        (pweights * ((mu - mu_0) ** 2 + sigma ** 2)).sum(axis=0))
 
         return
 
@@ -651,9 +653,9 @@ class POHMM(object):
     def _do_viterbi_pass(self, framelogprob, event_idx):
         n_observations, n_components = framelogprob.shape
         state_sequence, logprob = _hmmc._viterbi(
-            n_observations, n_components,
-            event_idx, self._log_startprob,
-            self._log_transmat, framelogprob)
+                n_observations, n_components,
+                event_idx, self._log_startprob,
+                self._log_transmat, framelogprob)
         return logprob, state_sequence
 
     def rand(self, unique_pstates, random_state=None):
@@ -786,8 +788,8 @@ class POHMM(object):
 
         # Make the prediction
         prediction = np.array(
-            [self.expected_value(feature, pstate=next_pstate, hstate_prob=next_hstate_prob) for feature in
-             self.emission_name])
+                [self.expected_value(feature, pstate=next_pstate, hstate_prob=next_hstate_prob) for feature in
+                 self.emission_name])
 
         # next_hstate = np.argmax(next_hstate_prob)
         # prediction = np.array(
@@ -1176,3 +1178,21 @@ class POHMM(object):
             return p
 
         return fn
+
+    def params(self, pstates=None):
+        if pstates is None:
+            pstates = [None] + sorted(set(self.er.values()))  # TODO: self.e caches any unknown value, maybe it shouldn't?
+
+        params = []
+
+        # emission parameters
+        for hstate, pstate_label in product(range(self.n_hidden_states), pstates):
+            for feature, distr in zip(self.emission_name, self.emission_distr):
+                for feature_param in _DISTRIBUTIONS[distr]:
+                    params.append(self.emission[feature][feature_param][self.e[pstate_label], hstate])
+
+        # transition parameters, diagonals only assuming 2 state
+        for hstate, pstate_label in product(range(self.n_hidden_states), pstates):
+            params.append(self.transmat[self.e[pstate_label], self.e[pstate_label], hstate, hstate])
+
+        return np.array(params)

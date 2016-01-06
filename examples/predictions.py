@@ -15,7 +15,7 @@ SEED = 1234
 
 
 def gen_pohmm():
-    hmm = pohmm.POHMM(n_hidden_states=2,
+    hmm = pohmm.Pohmm(n_hidden_states=2,
                       init_spread=2,
                       emissions=OBS_DISTR,
                       smoothing='freq',
