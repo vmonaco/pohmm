@@ -10,7 +10,7 @@ import numpy as np
 import pohmm
 
 OBS_DISTR = ['normal']
-PSTATES = ['a','b','c']
+PSTATES = ['a', 'b', 'c']
 SEED = 1234
 
 
@@ -25,7 +25,6 @@ def gen_pohmm():
 
 
 def main(n_classes=10, n_samples=1, n_obs=50):
-
     models = {i: gen_pohmm() for i in range(n_classes)}
 
     train_labels, train_samples = [], []
@@ -50,8 +49,9 @@ def main(n_classes=10, n_samples=1, n_obs=50):
     test_labels = np.array(test_labels)
     predictions = np.array(predictions)
 
-    print('ACC', (test_labels == predictions).sum()/len(test_labels))
+    print('ACC', (test_labels == predictions).sum() / len(test_labels))
     return
+
 
 if __name__ == '__main__':
     main()
