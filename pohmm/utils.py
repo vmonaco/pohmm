@@ -2,6 +2,7 @@ import numbers
 import numpy as np
 from itertools import product
 
+
 def check_random_state(seed):
     """Turn seed into a np.random.RandomState instance
 
@@ -66,58 +67,62 @@ def normalize(A, axis=None, inplace=False):
     A /= Asum
     return A
 
+
 def ph2full(ptrans, htrans):
-    '''
+    """
     Convert a p-state transition matrix and h-state matrices to the full transation matrix
 
     The full transmat hase N=n_pstates*n_hstates states
-    '''
+    """
     n_pstates = len(ptrans)
-    n_hstates = len(htrans[0,0])
+    n_hstates = len(htrans[0, 0])
     N = n_pstates * n_hstates
-    trans = np.zeros((N,N))
+    trans = np.zeros((N, N))
     for pidx in range(n_pstates):
         for hidx in range(n_hstates):
-            trans[pidx*n_hstates + hidx] = (ptrans[pidx,:,np.newaxis]*htrans[pidx,:,hidx]).flatten()
+            trans[pidx * n_hstates + hidx] = (ptrans[pidx, :, np.newaxis] * htrans[pidx, :, hidx]).flatten()
 
     return trans
 
-def full2ph(trans, n_pstates):
-    '''
-    Convert a full transmat to the respective p-state and h-state transmats
-    '''
-    n_hstates = len(trans)/n_pstates
 
-    htrans = np.zeros((n_pstates,n_pstates,n_hstates,n_hstates))
-    for pidx1,pidx2 in product(range(n_pstates),range(n_pstates)):
+def full2ph(trans, n_pstates):
+    """
+    Convert a full transmat to the respective p-state and h-state transmats
+    """
+    n_hstates = len(trans) / n_pstates
+
+    htrans = np.zeros((n_pstates, n_pstates, n_hstates, n_hstates))
+    for pidx1, pidx2 in product(range(n_pstates), range(n_pstates)):
         idx1 = pidx1 * n_hstates
         idx2 = pidx2 * n_hstates
-        htrans[pidx1,pidx2] = trans[idx1:idx1+n_hstates,idx2:idx2+n_hstates]
+        htrans[pidx1, pidx2] = trans[idx1:idx1 + n_hstates, idx2:idx2 + n_hstates]
 
     ptrans = normalize(htrans.sum(axis=-1).sum(axis=-1), axis=1)
     htrans = normalize(htrans, axis=3)
 
     return ptrans, htrans
 
+
 def gen_stochastic_matrix(size, random_state=None):
-    '''
+    """
     Generate a unfiformly-random stochastic array or matrix
-    '''
+    """
     if not type(size) is tuple:
-        size = (1,size)
+        size = (1, size)
 
     assert len(size) == 2
 
-    n = random_state.uniform(size=(size[0],size[1]-1))
-    n = np.concatenate([np.zeros((size[0],1)), n, np.ones((size[0],1))], axis=1)
+    n = random_state.uniform(size=(size[0], size[1] - 1))
+    n = np.concatenate([np.zeros((size[0], 1)), n, np.ones((size[0], 1))], axis=1)
 
     A = np.diff(np.sort(n))
     return A.squeeze()
 
+
 def steadystate(A, max_iter=100):
-    '''
+    """
     Empirically determine the steady state probabilities from a stochastic matrix
-    '''
+    """
     P = np.linalg.matrix_power(A, max_iter)
 
     # Determine the unique rows in A
@@ -128,16 +133,36 @@ def steadystate(A, max_iter=100):
 
     return normalize(np.sum(v, axis=0))
 
+
 def unique_rows(a):
-    '''
+    """
     Get the unique row values in matrix a
-    '''
+    """
     a = np.ascontiguousarray(a)
-    unique_a = np.unique(a.view([('', a.dtype)]*a.shape[1]))
+    unique_a = np.unique(a.view([('', a.dtype)] * a.shape[1]))
     return unique_a.view(a.dtype).reshape((unique_a.shape[0], a.shape[1]))
 
+
 def expected_lognormal(logsigma, logmu):
-    return np.exp(logmu + (logsigma**2)/2)
+    return np.exp(logmu + (logsigma ** 2) / 2)
+
 
 def expected_normal(logmu, logsigma):
     return logmu
+
+
+def download(url, local_fname):
+    import os
+    import urllib.request
+    import urllib.error
+
+    if os.path.exists(local_fname):
+        print('File exists:\n%s' % local_fname)
+        return
+
+    try:
+        print('Downloading:\n%s' % url)
+        urllib.request.urlretrieve(url, local_fname)
+    except urllib.error.HTTPError as e:
+        print('WARNING: Unable to download %s from URL.' % url)
+    return

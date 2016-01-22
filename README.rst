@@ -24,3 +24,9 @@ Stable version::
 
     $ pip install pohmm
 
+Example
+==========
+
+Keystroke example
+
+    $ python examples/keystroke.py
