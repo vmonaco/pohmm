@@ -149,20 +149,3 @@ def expected_lognormal(logsigma, logmu):
 
 def expected_normal(logmu, logsigma):
     return logmu
-
-
-def download(url, local_fname):
-    import os
-    import urllib.request
-    import urllib.error
-
-    if os.path.exists(local_fname):
-        print('File exists:\n%s' % local_fname)
-        return
-
-    try:
-        print('Downloading:\n%s' % url)
-        urllib.request.urlretrieve(url, local_fname)
-    except urllib.error.HTTPError as e:
-        print('WARNING: Unable to download %s from URL.' % url)
-    return
