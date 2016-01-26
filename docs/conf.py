@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 #
-# pohmm documentation build configuration file, created by
+# pysnn documentation build configuration file, created by
 # sphinx-quickstart on Tue Nov 17 08:23:29 2015.
 #
 # This file is execfile()d with the current directory set to its
@@ -48,7 +48,7 @@ source_suffix = '.rst'
 master_doc = 'index'
 
 # General information about the project.
-project = 'pohmm'
+project = 'pysnn'
 copyright = '2015, Vinnie Monaco'
 author = 'Vinnie Monaco'
 
@@ -224,7 +224,7 @@ latex_elements = {
 # (source start file, target name, title,
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
-  (master_doc, 'pohmm.tex', 'pohmm Documentation',
+  (master_doc, 'pysnn.tex', 'pysnn Documentation',
    'Vinnie Monaco', 'manual'),
 ]
 
@@ -254,7 +254,7 @@ latex_documents = [
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
 man_pages = [
-    (master_doc, 'pohmm', 'pohmm Documentation',
+    (master_doc, 'pysnn', 'pysnn Documentation',
      [author], 1)
 ]
 
@@ -268,8 +268,8 @@ man_pages = [
 # (source start file, target name, title, author,
 #  dir menu entry, description, category)
 texinfo_documents = [
-  (master_doc, 'pohmm', 'pohmm Documentation',
-   author, 'pohmm', 'One line description of project.',
+  (master_doc, 'pysnn', 'pysnn Documentation',
+   author, 'pysnn', 'One line description of project.',
    'Miscellaneous'),
 ]
 

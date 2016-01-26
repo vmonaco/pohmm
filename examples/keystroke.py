@@ -172,7 +172,7 @@ def verification(df):
         pohmm = keystroke_model()
         pohmm.fit_df(train)
 
-        # train_scores = np.array([pohmm.score_df(sample) for sample in train])
+        # train_scores = np.array([pysnn.score_df(sample) for sample in train])
         scores = []
         for sample in test:
             score = pohmm.score_df(sample)
