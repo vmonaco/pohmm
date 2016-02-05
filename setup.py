@@ -8,8 +8,8 @@ from setuptools import setup, Extension
 def read(fname):
     return open(os.path.join(os.path.dirname(__file__), fname)).read()
 
-exec(compile(open('pysnn/version.py').read(),
-                  'pysnn/version.py', 'exec'))
+exec(compile(open('pohmm/version.py').read(),
+                  'pohmm/version.py', 'exec'))
 
 try:
     import numpy as np
@@ -44,15 +44,15 @@ docs_require = [
 
 
 setup_options = dict(
-    name='pysnn',
+    name='pohmm',
     version=__version__,
     author='Vinnie Monaco',
     author_email='contact@vmonaco.com',
     description='Partially observable hidden Markov model',
     license='new BSD',
     keywords='hidden Markov model data analysis',
-    url='https://github.com/vmonaco/pysnn',
-    packages=['pysnn'],
+    url='https://github.com/vmonaco/pohmm',
+    packages=['pohmm'],
     long_description=read('README.txt'),
     classifiers=[
         'Development Status :: 2 - Pre-Alpha',
@@ -69,7 +69,7 @@ setup_options = dict(
         'Programming Language :: Python :: 3.5',
     ],
     ext_modules=[
-        Extension('pysnn._hmmc', ['pysnn/_hmmc.pyx'],
+        Extension('pohmm._hmmc', ['pohmm/_hmmc.pyx'],
                   extra_compile_args=['-O3'],
                   include_dirs=[np.get_include()])
     ],
@@ -79,7 +79,7 @@ setup_options = dict(
         'docs': docs_require
     },
     package_data={
-        "pysnn": [
+        "pohmm": [
             "../README.rst",
             "../README.txt",
             "../LICENSE",

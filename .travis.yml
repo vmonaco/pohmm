@@ -63,7 +63,7 @@ install:
   - pip install coveralls pytest-cov
   - pip install .
 # command to run tests
-script: py.test --cov=pysnn -vv
+script: py.test --cov=pohmm -vv
 after_success:
   coveralls
 # Don't want notifications
