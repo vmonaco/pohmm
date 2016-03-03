@@ -10,7 +10,7 @@ import numpy as np
 import pohmm
 
 OBS_DISTR = ['normal']
-PSTATES = ['a','b','c']
+PSTATES = ['a', 'b', 'c']
 SEED = 1234
 
 
@@ -33,7 +33,7 @@ def main(n_obs=50, reps=30):
 
     for i in range(reps):
         # Generate a sample
-        df = sampler.sample_df(n_obs=n_obs+1, random_state=i, hstate_col=None)
+        df = sampler.sample_df(n_obs=n_obs + 1, random_state=i, hstate_col=None)
 
         next_obs = df[sampler.emission_name].iloc[-1].values
         next_pstate = df['event'].iloc[-1]
@@ -63,6 +63,7 @@ def main(n_obs=50, reps=30):
     print(pohmm_residuals.mean(axis=0))
 
     return
+
 
 if __name__ == '__main__':
     main()

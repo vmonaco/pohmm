@@ -57,6 +57,7 @@ def preprocess(df):
     df = pd.concat(map(process_row, df.iterrows())).set_index(['user', 'session'])
     return df
 
+
 def roc_curve(y_true, y_score):
     from sklearn.metrics.ranking import _binary_clf_curve
     fps, tps, thresholds = _binary_clf_curve(
@@ -72,19 +73,21 @@ def roc_curve(y_true, y_score):
     tpr = tps / tps[-1]
     return fpr, 1 - tpr, thresholds
 
+
 def ROC(scores, roc_points=1000):
     # Generate an ROC curve for each fold, ordered by increasing threshold
     roc = scores.groupby('user').apply(lambda x: pd.DataFrame(np.c_[roc_curve(x['genuine'], x['score'])][::-1],
-                                                                       columns=['far','frr','threshold']))
+                                                              columns=['far', 'frr', 'threshold']))
 
     # interpolate to get the same threshold values in each fold
     thresholds = np.sort(roc['threshold'].unique())
     roc = roc.groupby(level='user').apply(lambda x: pd.DataFrame(np.c_[thresholds,
-                                                                   interp(thresholds, x['threshold'], x['far']),
-                                                                   interp(thresholds, x['threshold'], x['frr'])],
-                                                                         columns=['threshold','far','frr']))
+                                                                       interp(thresholds, x['threshold'], x['far']),
+                                                                       interp(thresholds, x['threshold'], x['frr'])],
+                                                                 columns=['threshold', 'far', 'frr']))
     roc = roc.reset_index(level=1, drop=True).reset_index()
     return roc
+
 
 def EER(roc):
     far, frr = roc['far'].values, roc['frr'].values
@@ -98,20 +101,20 @@ def EER(roc):
     # line segment a given by endpoints a1, a2
     # line segment b given by endpoints b1, b2
     def seg_intersect(a1, a2, b1, b2):
-        da = a2-a1
-        db = b2-b1
-        dp = a1-b1
+        da = a2 - a1
+        db = b2 - b1
+        dp = a1 - b1
         dap = perp(da)
         denom = np.dot(dap, db)
-        num = np.dot( dap, dp )
-        return (num / denom)*db + b1
+        num = np.dot(dap, dp)
+        return (num / denom) * db + b1
 
     d = far <= frr
     idx = np.diff(d).nonzero()[0][0]
     return seg_intersect(np.array([idx, far[idx]]),
-                         np.array([idx+1, far[idx+1]]),
+                         np.array([idx + 1, far[idx + 1]]),
                          np.array([idx, frr[idx]]),
-                         np.array([idx+1, frr[idx+1]]))[1]
+                         np.array([idx + 1, frr[idx + 1]]))[1]
 
 
 def keystroke_model():
@@ -150,7 +153,7 @@ def identification(df, n_folds=10, seed=1234):
     identification_results = pd.DataFrame.from_records(identification_results,
                                                        columns=['fold', 'label', 'prediction'])
     identification_summary = identification_results.groupby('fold').apply(
-            lambda x: (x['label'] == x['prediction']).sum() / len(x)).describe()
+        lambda x: (x['label'] == x['prediction']).sum() / len(x)).describe()
 
     print('Identification summary')
     print(identification_summary)
