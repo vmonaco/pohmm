@@ -203,9 +203,7 @@ def verification(df):
 
 if __name__ == '__main__':
     # Download and preprocess the CMU dataset
-    # df = pd.read_csv(DATASET_URL)
-    df = pd.read_csv('~/Downloads/cmu.csv')
-    df = df[:800]
+    df = pd.read_csv(DATASET_URL)
     df = preprocess(df)
-    # identification(df)
+    identification(df)
     verification(df)
