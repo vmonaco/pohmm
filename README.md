@@ -1,17 +1,12 @@
-|-------------------|----------------------|------------------|----------------|
 | [![Build Status](https://api.travis-ci.org/vmonaco/pohmm.png?branch=master)](https://travis-ci.org/vmonaco/pohmm) | [![Coverage](https://coveralls.io/repos/vmonaco/pohmm/badge.svg?branch=master&service=github)](https://coveralls.io/github/vmonaco/pohmm?branch=master) | [![pip version](https://img.shields.io/pypi/v/pohmm.svg)](https://pypi.python.org/pypi/pohmm) | [![pip downloads](https://img.shields.io/pypi/dm/pohmm.svg)](https://pypi.python.org/pypi/pohmm) |
 
 # pohmm 
 
 ``pohmm`` is an implementation of the partially observable hidden Markov model, a generalization of the hidden Markov model in which the underlying system state is partially observable through event metadata at each time step.
 
-A particular application that motivates usage of such a model is keystroke biometrics where the user can be in either a passive or active hidden state at each time step, and the time between key presses depends on the hidden state. In addition, the hidden state depends on the key that was pressed; thus the keys are observed symbols that partially reveal the hidden state of the user.
+An application that motivates usage of such a model is keystroke biometrics where the user can be in either a passive or active hidden state at each time step, and the time between key presses depends on the hidden state. In addition, the hidden state depends on the key that was pressed; thus the keys are observed symbols that partially reveal the hidden state of the user.
 
 ## Install
-
-Stable version:
-
-    $ pip install pohmm
 
 Development version:
 
@@ -33,11 +28,3 @@ In the root source directory,
 
 ## How to cite
 
-```xml
-@article{monaco2016pohmm, 
-    title={The Partially Observable Hidden Markov Model with Application to Keystroke Biometrics},
-    author={John V.~Monaco and Charles C.~Tappert},
-    journal={arXiv preprint arXiv:},
-    year={2016}
-}
-```
