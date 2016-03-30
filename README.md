@@ -1,3 +1,7 @@
+<div align="center">
+  <img src="figures/pohmm-structure.png"><br><br>
+</div>
+
 [![Build Status](https://api.travis-ci.org/vmonaco/pohmm.png?branch=master)](https://travis-ci.org/vmonaco/pohmm) [![Coverage](https://coveralls.io/repos/vmonaco/pohmm/badge.svg?branch=master&service=github)](https://coveralls.io/github/vmonaco/pohmm?branch=master) [![pip version](https://img.shields.io/pypi/v/pohmm.svg)](https://pypi.python.org/pypi/pohmm) [![pip downloads](https://img.shields.io/pypi/dm/pohmm.svg)](https://pypi.python.org/pypi/pohmm)
 
 # pohmm 
@@ -7,8 +11,6 @@
 An application that motivates usage of such a model is keystroke biometrics where the user can be in either a passive or active hidden state at each time step, and the time between key presses depends on the hidden state. In addition, the hidden state depends on the key that was pressed; thus the keys are observed symbols that partially reveal the hidden state of the user.
 
 Much of this code is based on the [hmmlearn](https://github.com/hmmlearn/hmmlearn) python package.
-
-![POHMM structure](figures/pohmm-structure.png)
 
 ## Install
 
