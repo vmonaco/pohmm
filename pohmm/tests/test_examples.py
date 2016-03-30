@@ -31,8 +31,4 @@ def test_example(example, module_name):
         main = getattr(import_module(module_name), 'main')
         main()
     except AttributeError as e:
-        skip_exceptions = []
-        if any([text in str(e) for text in skip_exceptions]):
-            pytest.skip(e)
-        else:
-            raise
+        pytest.skip(e)
