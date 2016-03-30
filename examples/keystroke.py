@@ -1,6 +1,7 @@
 import numpy as np
 import pandas as pd
 from scipy import interp
+from sklearn.metrics.ranking import _binary_clf_curve
 
 from pohmm import Pohmm, PohmmClassifier, PohmmVerifier
 
@@ -59,7 +60,6 @@ def preprocess(df):
 
 
 def roc_curve(y_true, y_score):
-    from sklearn.metrics.ranking import _binary_clf_curve
     fps, tps, thresholds = _binary_clf_curve(
         y_true, y_score, pos_label=None, sample_weight=None)
 
