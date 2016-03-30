@@ -200,10 +200,16 @@ def verification(df):
 
     return
 
-
-if __name__ == '__main__':
+def main():
     # Download and preprocess the CMU dataset
     df = pd.read_csv(DATASET_URL)
     df = preprocess(df)
+
+    # Keep only the first ten users
+    df = df[:400*10]
+
     identification(df)
     verification(df)
+
+if __name__ == '__main__':
+    main()
