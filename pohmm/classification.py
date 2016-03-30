@@ -63,25 +63,3 @@ class PohmmClassifier(object):
             scores[label] = pohmm.score_df(df, pstate_col=pstate_col)
         max_score_label = max(scores.items(), key=itemgetter(1))[0]
         return max_score_label, scores
-
-
-class PohmmVerifier(object):
-    """
-    Train a POHMM for each label and make predictions by choosing the maximum likelihood model
-    """
-
-    def __init__(self, pohmm):
-
-        return
-
-    def fit(self, labels, samples):
-        pass
-
-    def predict(self, label, sample):
-        pass
-
-    def fit_df(self, labels, dfs):
-        pass
-
-    def predict_df(self, label, df):
-        pass

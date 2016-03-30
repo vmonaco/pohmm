@@ -29,6 +29,7 @@ def example(request):
 def test_example(example, module_name):
     try:
         main = getattr(import_module(module_name), 'main')
+        main()
     except ImportError as e:
         skip_exceptions = []
         if any([text in str(e) for text in skip_exceptions]):
@@ -36,4 +37,3 @@ def test_example(example, module_name):
         else:
             raise
 
-    main()

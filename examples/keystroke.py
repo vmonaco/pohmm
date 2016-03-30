@@ -3,7 +3,7 @@ import pandas as pd
 from scipy import interp
 from sklearn.metrics.ranking import _binary_clf_curve
 
-from pohmm import Pohmm, PohmmClassifier, PohmmVerifier
+from pohmm import Pohmm, PohmmClassifier
 
 # CMU Keystroke Dynamics Benchmark Dataset
 # See: http://www.cs.cmu.edu/~keystroke/
@@ -74,7 +74,7 @@ def roc_curve(y_true, y_score):
     return fpr, 1 - tpr, thresholds
 
 
-def ROC(scores, roc_points=1000):
+def ROC(scores):
     # Generate an ROC curve for each fold, ordered by increasing threshold
     roc = scores.groupby('user').apply(lambda x: pd.DataFrame(np.c_[roc_curve(x['genuine'], x['score'])][::-1],
                                                               columns=['far', 'frr', 'threshold']))
@@ -123,14 +123,14 @@ def keystroke_model():
                 emissions=['lognormal', 'lognormal'],
                 smoothing='freq',
                 init_method='obs',
-                thresh=1e-2)
+                thresh=1)
     return hmm
 
 
 def identification(df, n_folds=10, seed=1234):
+    # Obtain identification results using k-fold cross validation
     np.random.seed(seed)
 
-    # Obtain identification results using 10-fold cross validation
     folds = stratified_kfold(df, n_folds)
 
     identification_results = []
@@ -156,13 +156,11 @@ def identification(df, n_folds=10, seed=1234):
         lambda x: (x['label'] == x['prediction']).sum() / len(x)).describe()
 
     print('Identification summary')
-    print(identification_summary)
+    print('ACC: %.3f +/- %.3f' % (identification_summary['mean'], identification_summary['std']))
     return
 
 
 def verification(df):
-    # Obtain verification results using the cross validation procedure described at:
-    # http://www.cs.cmu.edu/~keystroke/
     verification_results = []
     users = set(df.index.get_level_values(level='user').unique())
     for genuine_user in users:
@@ -170,7 +168,7 @@ def verification(df):
         genuine_samples = df.loc[genuine_user]
 
         _, genuine_samples = zip(*genuine_samples.groupby(level='session'))
-        train, test = genuine_samples[:200], genuine_samples[200:]
+        train, test = genuine_samples[150:200], genuine_samples[200:]
 
         pohmm = keystroke_model()
         pohmm.fit_df(train)
@@ -184,7 +182,7 @@ def verification(df):
 
         for imposter_user in impostor_users:
             _, impostor_samples = zip(*df.loc[imposter_user].groupby(level='session'))
-            for sample in impostor_samples[:100]:
+            for sample in impostor_samples[:5]:
                 score = pohmm.score_df(sample)
                 scores.append(score)
                 verification_results.append((genuine_user, False, score))
@@ -196,20 +194,16 @@ def verification(df):
     verification_summary = verification_ROC.groupby('user').apply(EER).describe()
 
     print('Verification summary')
-    print(verification_summary)
-
+    print('EER: %.3f +/- %.3f' % (verification_summary['mean'], verification_summary['std']))
     return
 
-def main():
+
+if __name__ == '__main__':
     # Download and preprocess the CMU dataset
     df = pd.read_csv(DATASET_URL)
     df = preprocess(df)
 
-    # Keep only the first ten users
-    df = df[:400*10]
-
-    identification(df)
     verification(df)
 
-if __name__ == '__main__':
-    main()
+    # Limit to 30 samples per user for identification
+    identification(df.groupby(level=0).apply(lambda x: x[-11 * 30:]).reset_index(level=0, drop=True))
