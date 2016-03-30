@@ -5,18 +5,10 @@ language: python
 
 matrix:
   include:
-    - python: 2.7
-      env: MATPLOTLIB_VERSION=1.4.3 DISPLAY=:99.0
-    - python: 3.3
-      env: MATPLOTLIB_VERSION=1.4.3 DISPLAY=:99.0
     - python: 3.4
       env: MATPLOTLIB_VERSION=1.4.3 DISPLAY=:99.0
     - python: 3.5
       env: MATPLOTLIB_VERSION=1.4.3 DISPLAY=:99.0
-    - python: 2.7
-      env: MATPLOTLIB_VERSION=1.5.0rc2 DISPLAY=:99.0
-    - python: 3.5
-      env: MATPLOTLIB_VERSION=1.5.0rc2 DISPLAY=:99.0
 #  allow_failures:
 #    - python: "nightly"
 
@@ -49,7 +41,7 @@ install:
   - conda info -a
 
   # Should match requirements.txt
-  - conda create -n test-environment python=$TRAVIS_PYTHON_VERSION pip cython numpy scipy pandas pytest
+  - conda create -n test-environment python=$TRAVIS_PYTHON_VERSION pip cython numpy scipy pandas pytest scikit-learn
   - source activate test-environment
 
   # When 1.5.0 is released, can use only conda.
