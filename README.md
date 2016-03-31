@@ -16,6 +16,10 @@ Much of this code is based on the [hmmlearn](https://github.com/hmmlearn/hmmlear
 
 ## Install
 
+To install the latest stable version:
+
+    $ pip install pohmm
+
 To install the development version:
 
     $ pip install git+git://github.com/vmonaco/pohmm.git

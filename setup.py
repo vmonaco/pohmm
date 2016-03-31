@@ -1,6 +1,6 @@
 #! /usr/bin/env python
 #
-# Copyright (C) 2015 Vinnie Monaco <contact@vmonaco.com>
+# Copyright (C) 2016 Vinnie Monaco <contact@vmonaco.com>
 
 import os, sys
 from setuptools import setup, Extension
@@ -80,7 +80,7 @@ setup_options = dict(
     },
     package_data={
         "pohmm": [
-            "../README.rst",
+            "../README.md",
             "../README.txt",
             "../LICENSE",
             "../MANIFEST.in",

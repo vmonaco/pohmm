@@ -1,6 +1,7 @@
 import numpy as np
 import pandas as pd
 from scipy import interp
+from sklearn.metrics import auc
 from sklearn.metrics.ranking import _binary_clf_curve
 
 from pohmm import Pohmm, PohmmClassifier
@@ -31,9 +32,7 @@ def user_folds(df, target):
 
 
 def preprocess(df):
-    """
-    Convert the CMU dataset from row vectors into time/duration row observations
-    """
+    """Convert the CMU dataset from row vectors into time/duration row observations"""
 
     def process_row(idx_row):
         idx, row = idx_row
@@ -117,14 +116,19 @@ def EER(roc):
                          np.array([idx + 1, frr[idx + 1]]))[1]
 
 
+def AUC(roc):
+    return auc(roc['frr'].values, roc['far'].values)
+
+
 def keystroke_model():
-    hmm = Pohmm(n_hidden_states=2,
-                init_spread=2,
-                emissions=['lognormal', 'lognormal'],
-                smoothing='freq',
-                init_method='obs',
-                thresh=1)
-    return hmm
+    """Generates a 2-state model with lognormal emissions and frequency smoothing"""
+    model = Pohmm(n_hidden_states=2,
+                  init_spread=2,
+                  emissions=['lognormal', 'lognormal'],
+                  smoothing='freq',
+                  init_method='obs',
+                  thresh=1e-2)
+    return model
 
 
 def identification(df, n_folds=10, seed=1234):
@@ -152,11 +156,11 @@ def identification(df, n_folds=10, seed=1234):
 
     identification_results = pd.DataFrame.from_records(identification_results,
                                                        columns=['fold', 'label', 'prediction'])
-    identification_summary = identification_results.groupby('fold').apply(
+    acc_summary = identification_results.groupby('fold').apply(
         lambda x: (x['label'] == x['prediction']).sum() / len(x)).describe()
 
     print('Identification summary')
-    print('ACC: %.3f +/- %.3f' % (identification_summary['mean'], identification_summary['std']))
+    print('ACC: %.3f +/- %.3f' % (acc_summary['mean'], acc_summary['std']))
     return
 
 
@@ -168,6 +172,7 @@ def verification(df):
         genuine_samples = df.loc[genuine_user]
 
         _, genuine_samples = zip(*genuine_samples.groupby(level='session'))
+
         train, test = genuine_samples[150:200], genuine_samples[200:]
 
         pohmm = keystroke_model()
@@ -191,10 +196,12 @@ def verification(df):
                                                      columns=['user', 'genuine', 'score'])
 
     verification_ROC = verification_results.groupby('user').apply(ROC)
-    verification_summary = verification_ROC.groupby('user').apply(EER).describe()
+    eer_summary = verification_ROC.groupby('user').apply(EER).describe()
+    auc_summary = verification_ROC.groupby('user').apply(AUC).describe()
 
     print('Verification summary')
-    print('EER: %.3f +/- %.3f' % (verification_summary['mean'], verification_summary['std']))
+    print('EER: %.3f +/- %.3f' % (eer_summary['mean'], eer_summary['std']))
+    print('AUC: %.3f +/- %.3f' % (auc_summary['mean'], auc_summary['std']))
     return
 
 
@@ -203,7 +210,9 @@ if __name__ == '__main__':
     df = pd.read_csv(DATASET_URL)
     df = preprocess(df)
 
-    verification(df)
+    # Verification results obtained using the 4th session as training data,
+    # sessions 5-8 as genuine and reps 1-5 as impostor
+    # verification(df)
 
-    # Limit to 30 samples per user for identification
-    identification(df.groupby(level=0).apply(lambda x: x[-11 * 30:]).reset_index(level=0, drop=True))
+    # Identification results obtained by 10-fold stratified cross validation using only the 20 repetitions
+    identification(df.groupby(level=0).apply(lambda x: x[-11 * 20:]).reset_index(level=0, drop=True))
