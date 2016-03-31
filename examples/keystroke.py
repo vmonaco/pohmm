@@ -127,7 +127,7 @@ def keystroke_model():
                   emissions=['lognormal', 'lognormal'],
                   smoothing='freq',
                   init_method='obs',
-                  thresh=1e-2)
+                  thresh=1)
     return model
 
 
@@ -206,13 +206,15 @@ def verification(df):
 
 
 if __name__ == '__main__':
+    print('This example takes about 15 minutes to run on an Intel i5...')
+
     # Download and preprocess the CMU dataset
     df = pd.read_csv(DATASET_URL)
     df = preprocess(df)
 
     # Verification results obtained using the 4th session as training data,
     # sessions 5-8 as genuine and reps 1-5 as impostor
-    # verification(df)
+    verification(df)
 
-    # Identification results obtained by 10-fold stratified cross validation using only the 20 repetitions
-    identification(df.groupby(level=0).apply(lambda x: x[-11 * 20:]).reset_index(level=0, drop=True))
+    # Identification results obtained by 10-fold stratified cross validation using only the last session
+    identification(df.groupby(level=0).apply(lambda x: x[-(11 * 50):]).reset_index(level=0, drop=True))
