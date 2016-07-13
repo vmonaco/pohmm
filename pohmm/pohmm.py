@@ -861,7 +861,7 @@ class Pohmm(object):
         Convenience function to fit a model from a list of dataframes
         """
         obs_cols = self.emission_name
-        obs = [df[df.columns.difference([pstate_col])][obs_cols].values for df in dfs]
+        obs = [df[df.columns.difference([pstate_col])][list(obs_cols)].values for df in dfs]
         pstates = [df[pstate_col].values for df in dfs]
         return self.fit(obs, pstates)
 
@@ -870,7 +870,7 @@ class Pohmm(object):
 
         """
         obs_cols = self.emission_name
-        obs = df[df.columns.difference([pstate_col])][obs_cols].values
+        obs = df[df.columns.difference([pstate_col])][list(obs_cols)].values
         pstates = df[pstate_col].values
         return self.score(obs, pstates)
 
