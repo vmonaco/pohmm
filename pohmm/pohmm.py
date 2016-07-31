@@ -887,14 +887,14 @@ class Pohmm(object):
 
     def predict_states_df(self, df, pstate_col=PSTATE_COL, hstate_col=HSTATE_COL):
         df = df.copy()
-        obs_cols = self.emission_name
+        obs_cols = list(self.emission_name)
         obs = df[df.columns.difference([pstate_col])][obs_cols].values
         pstates = df[pstate_col].values
         _, df[hstate_col] = self.predict_states(obs, pstates)
         return df
 
     def predict_df(self, df, next_pstate=None, pstate_col=PSTATE_COL):
-        obs_cols = self.emission_name
+        obs_cols = list(self.emission_name)
         obs = df[df.columns.difference([pstate_col])][obs_cols].values
         pstates = df[pstate_col].values
         return self.predict(obs, pstates, next_pstate)
