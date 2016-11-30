@@ -4,7 +4,7 @@
 
 -----------------
 
-[![Build Status](https://api.travis-ci.org/vmonaco/pohmm.png?branch=master)](https://travis-ci.org/vmonaco/pohmm) [![Coverage](https://coveralls.io/repos/vmonaco/pohmm/badge.svg?branch=master&service=github)](https://coveralls.io/github/vmonaco/pohmm?branch=master) [![pip version](https://img.shields.io/pypi/v/pohmm.svg)](https://pypi.python.org/pypi/pohmm) [![pip downloads](https://img.shields.io/pypi/dm/pohmm.svg)](https://pypi.python.org/pypi/pohmm)
+[![Build Status](https://api.travis-ci.org/vmonaco/pohmm.png?branch=master)](https://travis-ci.org/vmonaco/pohmm) [![pip version](https://img.shields.io/pypi/v/pohmm.svg)](https://pypi.python.org/pypi/pohmm)
 
 # pohmm 
 
