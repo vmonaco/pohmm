@@ -197,7 +197,7 @@ Other examples can be found in the `examples/` directory. To obtain results for 
 
 ```
 @article{monaco2016pohmm,
-  title={The Partially Observable Hidden Markov Model with Application to Keystroke Biometrics},
+  title={The Partially Observable Hidden Markov Model and its Application to Keystroke Biometrics},
   author={John V.~Monaco and Charles C.~Tappert},
   journal={arXiv preprint arXiv:1607.03854},
   year={2016}
