@@ -22,11 +22,7 @@ addons:
 before_install:
   - sh -e /etc/init.d/xvfb start
 
-# See http://conda.pydata.org/docs/travis.html
 install:
-  # You may want to periodically update this, although the conda update
-  # conda line below will keep everything up-to-date.
-  # This saves us some downloading for this version
   - if [[ "$TRAVIS_PYTHON_VERSION" == "2.7" ]]; then
       wget https://repo.continuum.io/miniconda/Miniconda-latest-Linux-x86_64.sh -O miniconda.sh;
     else
@@ -58,6 +54,3 @@ install:
 script: py.test --cov=pohmm -vv
 after_success:
   coveralls
-# Don't want notifications
-notifications:
-  email: false

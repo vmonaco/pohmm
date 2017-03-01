@@ -67,6 +67,7 @@ setup_options = dict(
         'Programming Language :: Python :: 3.3',
         'Programming Language :: Python :: 3.4',
         'Programming Language :: Python :: 3.5',
+        'Programming Language :: Python :: 3.6',
     ],
     ext_modules=[
         Extension('pohmm._hmmc', ['pohmm/_hmmc.pyx'],
