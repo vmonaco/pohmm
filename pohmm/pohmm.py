@@ -682,7 +682,7 @@ class Pohmm(object):
         if unique_pstates is not None:
             self._init_pstates(unique_pstates)
         else:
-            self._init_pstates(np.unique(np.concatenate(pstates)))
+            self._init_pstates(list(set(np.concatenate(pstates))))
 
         # Map the partial states to a unique index
         pstates_idx = [np.array([self.e[p] for p in seq]) for seq in pstates]
@@ -831,30 +831,46 @@ class Pohmm(object):
         if pstates is not None and n_obs is not None:
             raise Exception('Must provide either pstates or n_obs but not both')
 
+        gen_pstates = False
+        rand = random_state.rand()
         if pstates is None:
-            pstates_idx = self.gen_pstates_idx(n_obs, random_state)
-            pstates = np.array([self.er[idx] for idx in pstates_idx])
+            gen_pstates = True
+            pstartprob_cdf = np.cumsum(self.pstate_startprob)
+            ptransmat_cdf = np.cumsum(self.pstate_transmat, 1)
+
+            # Initial pstate
+            currpstate = (pstartprob_cdf > rand).argmax()
+            pstates_idx = [currpstate]
+            pstates = [self.er[currpstate]]
         else:
+            n_obs = len(pstates)
             pstates_idx = np.array([self.e[p] for p in pstates])
 
         startprob_pdf = self.startprob[pstates_idx[0]]
         startprob_cdf = np.cumsum(startprob_pdf)
         transmat_cdf = np.cumsum(self.transmat[0, pstates_idx[0]], 1)
 
-        # Initial state.
+        # Initial hidden state
         rand = random_state.rand()
         currstate = (startprob_cdf > rand).argmax()
         hidden_states = [currstate]
         obs = [self._generate_sample_from_state(currstate, pstates_idx[0], random_state)]
 
-        for i in range(1, len(pstates_idx)):
+        for i in range(1, n_obs):
+            rand = random_state.rand()
+
+            if gen_pstates:
+                currpstate = (ptransmat_cdf[currpstate] > rand).argmax()
+                pstates_idx.append(currpstate)
+                pstates.append(self.er[currpstate])
+
             transmat_cdf = np.cumsum(self.transmat[pstates_idx[i - 1], pstates_idx[i]], 1)
             rand = random_state.rand()
             currstate = (transmat_cdf[currstate] > rand).argmax()
             hidden_states.append(currstate)
             obs.append(self._generate_sample_from_state(currstate, pstates_idx[i], random_state))
 
-        return np.array(obs), pstates, np.array(hidden_states, dtype=int)
+        return np.array(obs), np.array(pstates), np.array(hidden_states, dtype=int)
 
     def fit_df(self, dfs, pstate_col=PSTATE_COL):
         """
