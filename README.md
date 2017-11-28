@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="figures/pohmm-structure.png"><br><br>
+  <img src="figures/pohmm.png"><br><br>
 </div>
 
 -----------------
@@ -196,11 +196,13 @@ Other examples can be found in the `examples/` directory. To obtain results for 
 ## How to cite
 
 ```
-@article{monaco2016pohmm,
-  title={The Partially Observable Hidden Markov Model and its Application to Keystroke Biometrics},
-  author={John V.~Monaco and Charles C.~Tappert},
-  journal={arXiv preprint arXiv:1607.03854},
-  year={2016}
+@article{Monaco2017,
+title = "The Partially Observable Hidden Markov Model and its Application to Keystroke Dynamics ",
+journal = "Pattern Recognition ",
+year = "2017",
+issn = "0031-3203",
+doi = "https://doi.org/10.1016/j.patcog.2017.11.021",
+url = "https://www.sciencedirect.com/science/article/pii/S0031320317304752",
+author = "John V. Monaco and Charles C. Tappert",
 }
-
 ```

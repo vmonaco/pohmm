@@ -9,6 +9,8 @@ matrix:
       env: MATPLOTLIB_VERSION=1.4.3 DISPLAY=:99.0
     - python: 3.5
       env: MATPLOTLIB_VERSION=1.4.3 DISPLAY=:99.0
+    - python: 3.6
+      env: MATPLOTLIB_VERSION=1.4.3 DISPLAY=:99.0
 #  allow_failures:
 #    - python: "nightly"
 
@@ -51,6 +53,6 @@ install:
   - pip install coveralls pytest-cov
   - pip install .
 # command to run tests
-script: py.test --cov=pohmm -vv
+script: py.test -vv
 after_success:
   coveralls
