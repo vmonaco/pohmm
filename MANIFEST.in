@@ -4,4 +4,5 @@ include pyproject.toml
 
 recursive-include pohmm *
 
-recursive-exclude * *.py[co]
+global-exclude *.py[co]
+global-exclude *.so
