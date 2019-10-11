@@ -52,3 +52,5 @@ nosetests.xml
 .idea/
 
 .cache/
+
+pip-wheel-metadata/
