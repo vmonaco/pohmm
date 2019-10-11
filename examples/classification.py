@@ -25,6 +25,7 @@ def gen_pohmm():
 
 
 def main(n_classes=10, n_samples=1, n_obs=50):
+    np.random.seed(1234)
     models = {i: gen_pohmm() for i in range(n_classes)}
 
     train_labels, train_samples = [], []
