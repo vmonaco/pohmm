@@ -2,6 +2,7 @@
 doc/_build
 doc/auto_examples
 doc/generated
+pohmm/_hmmc.c
 
 # Python compiled files
 *.py[cod]
