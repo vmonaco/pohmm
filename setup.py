@@ -4,25 +4,14 @@
 
 import os, sys
 from setuptools import setup, Extension
+from Cython.Build import cythonize
+import numpy
 
 def read(fname):
     return open(os.path.join(os.path.dirname(__file__), fname)).read()
 
 exec(compile(open('pohmm/version.py').read(),
                   'pohmm/version.py', 'exec'))
-
-try:
-    import numpy as np
-except ImportError:
-    import os.path
-    import sys
-
-    # A dirty hack to get RTD running.
-    class np:
-        @staticmethod
-        def get_include():
-            return os.path.join(sys.prefix, 'include')
-
 
 install_requires = [
     'numpy',
@@ -69,11 +58,8 @@ setup_options = dict(
         'Programming Language :: Python :: 3.5',
         'Programming Language :: Python :: 3.6',
     ],
-    ext_modules=[
-        Extension('pohmm._hmmc', ['pohmm/_hmmc.pyx'],
-                  extra_compile_args=['-O3'],
-                  include_dirs=[np.get_include()])
-    ],
+    ext_modules=cythonize("pohmm/_hmmc.pyx"),
+    include_dirs=[numpy.get_include()],
     install_requires=install_requires,
     extras_require={
         'testing': tests_require,
