@@ -207,12 +207,11 @@ def verification(df):
     return
 
 
-if __name__ == '__main__':
+def main():
     print('This example takes about 15 minutes to run on an Intel i5...')
 
     # Download and preprocess the CMU dataset
     df = pd.read_csv(DATASET_URL)
-    df = df[:1200]
     df = preprocess(df)
 
     # Verification results obtained using the 4th session as training data,
@@ -221,3 +220,6 @@ if __name__ == '__main__':
 
     # Identification results obtained by 10-fold stratified cross validation using only the last session
     identification(df.groupby(level=0).apply(lambda x: x[-(11 * 50):]).reset_index(level=0, drop=True))
+
+if __name__ == '__main__':
+    main()
