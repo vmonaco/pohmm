@@ -14,9 +14,10 @@ exec(compile(open('pohmm/version.py').read(),
                   'pohmm/version.py', 'exec'))
 
 install_requires = [
+    'Cython',
     'numpy',
     'scipy',
-    'Cython'
+    'pandas',
 ]
 
 tests_require = [
