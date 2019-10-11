@@ -1,6 +1,6 @@
 import numpy as np
 import scipy.stats as stats
-from collections import defaultdict, Counter
+from collections import defaultdict, Counter, OrderedDict
 from . import _hmmc
 from .utils import *
 
@@ -152,7 +152,7 @@ class Pohmm(object):
 
         # Mapping between p-states and a unique index
         # Defaults to 0 for unknown or missing p-states
-        self.e = defaultdict(int)
+        self.e = defaultdict(np.int64)
 
     def _get_startprob(self):
         return np.exp(self._log_startprob)
@@ -263,7 +263,7 @@ class Pohmm(object):
 
     def _init_pstates(self, unique_pstates):
         # Map events to a unique index. The unknown p-state is at idx 0
-        self.e = defaultdict(int)
+        self.e = defaultdict(np.int64)
         self.e.update(dict(zip(np.sort(unique_pstates), range(1, len(unique_pstates) + 1))))
         self.er = {v: k for k, v in self.e.items()}  # Reverse lookup
         self.er[0] = UNKNOWN_PSTATE
@@ -304,7 +304,7 @@ class Pohmm(object):
 
         # obs should be (N*T, n_features)
         # N is the number of samples
-        # T is the size of each sample 
+        # T is the size of each sample
         obs = np.concatenate(obs)
         pstates_idx = np.concatenate(pstates_idx)
 
@@ -450,7 +450,7 @@ class Pohmm(object):
                 w_ = self.pstate_trans_freq[0, 0] * np.exp(
                     -(self.pstate_trans_freq[i, 0] + self.pstate_trans_freq[0, j]))
                 w_ij = self.pstate_trans_freq[i, j]
-                w_ij, w_i0, w_0j, w_ = normalize(np.array([w_ij, w_i0, w_0j, w_]))
+                w_ij, w_i0, w_0j, w_ = normalize(np.array([w_ij, w_i0, w_0j, w_]), dtype=np.float64)
             elif 'fixed' == self.smoothing['transmat']:
                 w_i0 = 0
                 w_0j = 0
@@ -672,7 +672,7 @@ class Pohmm(object):
         """
         Estimate model parameters.
         """
-        obs = [np.array(o) for o in obs]
+        obs = [np.array(o, dtype=np.float64) for o in obs]
         pstates = [np.array(p) for p in pstates]
 
         # List or array of observation sequences
@@ -686,7 +686,7 @@ class Pohmm(object):
             self._init_pstates(list(set(np.concatenate(pstates))))
 
         # Map the partial states to a unique index
-        pstates_idx = [np.array([self.e[p] for p in seq]) for seq in pstates]
+        pstates_idx = [np.array([self.e[p] for p in seq], dtype=np.int64) for seq in pstates]
 
         if self.init_method == 'rand':
             self._init_random()
@@ -734,7 +734,7 @@ class Pohmm(object):
         """
         Compute the log probability under the model.
         """
-        pstates_idx = np.array([self.e[p] for p in pstates])
+        pstates_idx = np.array([self.e[p] for p in pstates], dtype=np.int64)
         framelogprob = self._compute_log_likelihood(obs, pstates_idx)
         logprob, _ = self._do_forward_pass(framelogprob, pstates_idx)
         return logprob
@@ -743,7 +743,7 @@ class Pohmm(object):
         """
         Compute the log probability of each event under the model.
         """
-        pstates_idx = np.array([self.e[p] for p in pstates])
+        pstates_idx = np.array([self.e[p] for p in pstates], dtype=np.int64)
 
         framelogprob = self._compute_log_likelihood(obs, pstates_idx)
         _, fwdlattice = self._do_forward_pass(framelogprob, pstates_idx)
@@ -751,7 +751,7 @@ class Pohmm(object):
         return np.concatenate([L[[0]], np.diff(L)])
 
     def predict_states(self, obs, pstates):
-        pstates_idx = np.array([self.e[p] for p in pstates])
+        pstates_idx = np.array([self.e[p] for p in pstates], dtype=np.int64)
         framelogprob = self._compute_log_likelihood(obs, pstates_idx)
         viterbi_logprob, state_sequence = self._do_viterbi_pass(framelogprob, pstates_idx)
         return viterbi_logprob, state_sequence
@@ -761,7 +761,7 @@ class Pohmm(object):
         Predict the next observation
         """
         assert len(obs) == len(pstates)
-        pstates_idx = np.array([self.e[ei] for ei in pstates])
+        pstates_idx = np.array([self.e[ei] for ei in pstates], dtype=np.int64)
         next_pstate_idx = self.e[next_pstate]
 
         if len(obs) == 0:
@@ -790,7 +790,7 @@ class Pohmm(object):
         # Make the prediction
         prediction = np.array(
             [self.expected_value(feature, pstate=next_pstate, hstate_prob=next_hstate_prob) for feature in
-             self.emission_name])
+             self.emission_name], dtype=np.float64)
 
         # next_hstate = np.argmax(next_hstate_prob)
         # prediction = np.array(
@@ -818,7 +818,7 @@ class Pohmm(object):
             curr_pstate = (transmat_cdf[curr_pstate] > rand).argmax()
             pstates.append(curr_pstate)
 
-        return np.array(pstates, dtype=int)
+        return np.array(pstates)
 
     def sample(self, pstates=None, n_obs=None, random_state=None):
         """
@@ -845,7 +845,7 @@ class Pohmm(object):
             pstates = [self.er[currpstate]]
         else:
             n_obs = len(pstates)
-            pstates_idx = np.array([self.e[p] for p in pstates])
+            pstates_idx = np.array([self.e[p] for p in pstates], dtype=np.int64)
 
         startprob_pdf = self.startprob[pstates_idx[0]]
         startprob_cdf = np.cumsum(startprob_pdf)
@@ -871,7 +871,7 @@ class Pohmm(object):
             hidden_states.append(currstate)
             obs.append(self._generate_sample_from_state(currstate, pstates_idx[i], random_state))
 
-        return np.array(obs), np.array(pstates), np.array(hidden_states, dtype=int)
+        return np.array(obs), np.array(pstates), np.array(hidden_states, dtype=np.int64)
 
     def fit_df(self, dfs, pstate_col=PSTATE_COL):
         """
@@ -935,7 +935,7 @@ class Pohmm(object):
             items.append((hstate_col, hstates))
 
         items = items + [(self.emission_name[i], obs[:, i]) for i in range(self.n_features)]
-        df = pd.DataFrame.from_items(items)
+        df = pd.DataFrame.from_dict(OrderedDict(items))
         return df
 
     def __str__(self):
@@ -1114,8 +1114,8 @@ class Pohmm(object):
             if np.isscalar(x):
                 p = np.sum(w * pdf(x))
             else:
-                x = np.array(x)
-                p = np.zeros(len(x))
+                x = np.array(x, dtype=np.float64)
+                p = np.zeros(len(x), dtype=np.float64)
                 for i, xi in enumerate(x):
                     p[i] = np.sum(w * pdf(xi))
             return p
@@ -1188,8 +1188,8 @@ class Pohmm(object):
             if np.isscalar(x):
                 p = np.sum(w * cdf(x))
             else:
-                x = np.array(x)
-                p = np.zeros(len(x))
+                x = np.array(x, dtype=np.float64)
+                p = np.zeros(len(x), dtype=np.float64)
                 for i, xi in enumerate(x):
                     p[i] = np.sum(w * cdf(xi))
             return p

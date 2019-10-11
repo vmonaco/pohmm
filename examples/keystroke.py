@@ -49,7 +49,7 @@ def preprocess(df):
         return pd.DataFrame.from_items([
             ('user', [row['subject']] * 11),
             ('session', [row['sessionIndex'] * 100 + row['rep']] * 11),
-            ('tau', tau),
+            # ('tau', tau),
             ('duration', duration),
             ('event', keyname)
         ])
@@ -124,7 +124,7 @@ def keystroke_model():
     """Generates a 2-state model with lognormal emissions and frequency smoothing"""
     model = Pohmm(n_hidden_states=2,
                   init_spread=2,
-                  emissions=['lognormal', 'lognormal'],
+                  emissions=[('duration','lognormal')],
                   smoothing='freq',
                   init_method='obs',
                   thresh=1)
@@ -176,6 +176,7 @@ def verification(df):
         train, test = genuine_samples[150:200], genuine_samples[200:]
 
         pohmm = keystroke_model()
+        from IPython import embed; embed(); raise Exception;
         pohmm.fit_df(train)
 
         # train_scores = np.array([pohmm.score_df(sample) for sample in train])
@@ -196,6 +197,7 @@ def verification(df):
                                                      columns=['user', 'genuine', 'score'])
 
     verification_ROC = verification_results.groupby('user').apply(ROC)
+    del verification_ROC['user']
     eer_summary = verification_ROC.groupby('user').apply(EER).describe()
     auc_summary = verification_ROC.groupby('user').apply(AUC).describe()
 
@@ -210,6 +212,7 @@ if __name__ == '__main__':
 
     # Download and preprocess the CMU dataset
     df = pd.read_csv(DATASET_URL)
+    df = df[:1200]
     df = preprocess(df)
 
     # Verification results obtained using the 4th session as training data,
