@@ -176,7 +176,6 @@ def verification(df):
         train, test = genuine_samples[150:200], genuine_samples[200:]
 
         pohmm = keystroke_model()
-        from IPython import embed; embed(); raise Exception;
         pohmm.fit_df(train)
 
         # train_scores = np.array([pohmm.score_df(sample) for sample in train])
