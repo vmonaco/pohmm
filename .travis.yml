@@ -5,11 +5,11 @@ language: python
 
 matrix:
   include:
-    - python: 3.4
-      env: DISPLAY=:99.0
     - python: 3.5
       env: DISPLAY=:99.0
     - python: 3.6
+      env: DISPLAY=:99.0
+    - python: 3.7
       env: DISPLAY=:99.0
 #  allow_failures:
 #    - python: "nightly"
@@ -20,15 +20,11 @@ addons:
     - gcc
     - gfortran
 
-# To be able to run plotting tests
-before_install:
-  - sh -e /etc/init.d/xvfb start
-
 install:
   - if [[ "$TRAVIS_PYTHON_VERSION" == "2.7" ]]; then
-      wget https://repo.continuum.io/miniconda/Miniconda-4.2.12-Linux-x86_64.sh -O miniconda.sh;
+      wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh -O miniconda.sh;
     else
-      wget https://repo.continuum.io/miniconda/Miniconda3-4.2.12-Linux-x86_64.sh -O miniconda.sh;
+      wget https://repo.anaconda.com/miniconda/Miniconda2-latest-Linux-x86_64.sh -O miniconda.sh;
     fi
   - bash miniconda.sh -b -p $HOME/miniconda
   - export PATH="$HOME/miniconda/bin:$PATH"
