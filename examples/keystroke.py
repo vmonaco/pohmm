@@ -1,5 +1,6 @@
 import numpy as np
 import pandas as pd
+from collections import OrderedDict
 from scipy import interp
 from sklearn.metrics import auc
 from sklearn.metrics.ranking import _binary_clf_curve
@@ -20,7 +21,7 @@ def stratified_kfold(df, n_folds):
     sessions.apply(lambda x: np.random.shuffle(x))
     folds = []
     for i in range(n_folds):
-        idx = sessions.apply(lambda x: pd.Series(x[i * (len(x) / n_folds):(i + 1) * (len(x) / n_folds)]))
+        idx = sessions.apply(lambda x: pd.Series(x[i * (len(x) // n_folds):(i + 1) * (len(x) // n_folds)]))
         idx = pd.DataFrame(idx.stack().reset_index(level=1, drop=True)).set_index(0, append=True).index.values
         folds.append(df.loc[idx])
     return folds
@@ -46,13 +47,13 @@ def preprocess(df):
 
         keyname = list('.tie5Roanl') + ['enter']
 
-        return pd.DataFrame.from_items([
+        return pd.DataFrame.from_dict(OrderedDict([
             ('user', [row['subject']] * 11),
             ('session', [row['sessionIndex'] * 100 + row['rep']] * 11),
-            # ('tau', tau),
+            ('tau', tau),
             ('duration', duration),
             ('event', keyname)
-        ])
+        ]))
 
     df = pd.concat(map(process_row, df.iterrows())).set_index(['user', 'session'])
     return df
@@ -124,14 +125,14 @@ def keystroke_model():
     """Generates a 2-state model with lognormal emissions and frequency smoothing"""
     model = Pohmm(n_hidden_states=2,
                   init_spread=2,
-                  emissions=[('duration','lognormal')],
+                  emissions=[('duration','lognormal'),('tau','lognormal')],
                   smoothing='freq',
                   init_method='obs',
                   thresh=1)
     return model
 
 
-def identification(df, n_folds=10, seed=1234):
+def identification(df, n_folds=5, seed=1234):
     # Obtain identification results using k-fold cross validation
     np.random.seed(seed)
 
@@ -206,18 +207,19 @@ def verification(df):
     return
 
 
-def main():
+def main(n_users=10):
     print('This example takes about 15 minutes to run on an Intel i5...')
 
     # Download and preprocess the CMU dataset
     df = pd.read_csv(DATASET_URL)
+    df = df[:400*n_users]
     df = preprocess(df)
 
     # Verification results obtained using the 4th session as training data,
     # sessions 5-8 as genuine and reps 1-5 as impostor
     verification(df)
 
-    # Identification results obtained by 10-fold stratified cross validation using only the last session
+    # Identification results obtained by 5-fold stratified cross validation using only the last session
     identification(df.groupby(level=0).apply(lambda x: x[-(11 * 50):]).reset_index(level=0, drop=True))
 
 if __name__ == '__main__':
